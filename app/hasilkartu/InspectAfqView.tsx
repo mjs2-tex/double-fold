@@ -27,16 +27,36 @@ const InspectAfqView = () => {
 
     const handleCommand = (e: React.FormEvent) => {
         e.preventDefault();
-        // Jika ketik "BACK" (tidak peka huruf besar/kecil), arahkan ke base "/"
-        if (inputValue.toUpperCase() === "BACK") {
+        const command = inputValue.toUpperCase().trim();
+
+        if (command === "EXIT") {
             router.push("/");
-        } else {
-            // Opsional: tambahkan logika jika ingin mencari production_name baru di sini
-            // router.push(`/hasilkartu?production_name=${inputValue}`);
-            setInputValue(""); // Bersihkan input jika bukan perintah BACK
+        }
+        else if (command === "NEXT") {
+            if (currentPage < totalPages) {
+                setCurrentPage(prev => prev + 1);
+            }
+            setInputValue(""); // Bersihkan input agar siap perintah berikutnya
+        }
+        else if (command === "PREV") {
+            if (currentPage > 1) {
+                setCurrentPage(prev => prev - 1);
+            }
+            setInputValue("");
+        }
+        else {
+            // Jika input bukan command navigasi, bisa dikosongkan atau diolah sebagai pencarian
+            setInputValue("");
         }
     };
 
+
+    // Fokus otomatis setiap kali halaman berubah
+useEffect(() => {
+  if (inputRef.current) {
+    inputRef.current.focus();
+  }
+}, [currentPage]);
     // 1. Fetch Data berdasarkan production_name
     useEffect(() => {
         const fetchData = async () => {
